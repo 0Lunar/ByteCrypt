@@ -1,0 +1,4 @@
+colorama
+argparse
+regex
+pycryptodome
