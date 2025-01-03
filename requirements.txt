@@ -1,4 +1,3 @@
 colorama
 argparse
-regex
 pycryptodome

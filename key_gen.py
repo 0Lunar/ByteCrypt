@@ -8,10 +8,10 @@ ERROR = Fore.RESET + "[" + Fore.RED + "!" + Fore.RESET + "] "
 OK = Fore.RESET + "[" + Fore.GREEN + "+" + Fore.RESET + "] "
 
 
-parser = argparse.ArgumentParser(description="Generate a random key")
+parser = argparse.ArgumentParser(description="Generates a key and saves it to a file")
 
-parser.add_argument('-r', '--random', action='store_true', help='Generate random key and store it in a file')
-parser.add_argument('-k', '--key', type=str, help='Convert the key in sha256 and store it in a file')
+parser.add_argument('-r', '--random', action='store_true', help='Generate random key')
+parser.add_argument('-k', '--key', type=str, help='Convert the key in sha256')
 parser.add_argument('-f', '--file', help='The file to store the key', required=True)
 args = parser.parse_args()
 

@@ -42,6 +42,6 @@ class Crypt:
             decrypted = unpad(cipher.decrypt_and_verify(data, tag), AES.block_size)
         
         except:
-            RuntimeError("Error decrypting the data")
+            raise RuntimeError("Error decrypting the data")
         
         return decrypted

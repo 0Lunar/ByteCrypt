@@ -3,8 +3,8 @@ import os
 import sys
 from source.MapRoot import MapRoot
 from source.Crypt import Crypt
-import re
 from colorama import Fore
+import hashlib
 
 
 ERROR = Fore.RESET + "[" + Fore.RED + "!" + Fore.RESET + "] "
@@ -12,10 +12,10 @@ OK = Fore.RESET + "[" + Fore.GREEN + "+" + Fore.RESET + "] "
 WARNING = Fore.RESET + "[" + Fore.YELLOW + "?" + Fore.RESET + "] "
 
 
-parser = argparse.ArgumentParser(description="Encrypt and decrypt partitions")
+parser = argparse.ArgumentParser(description="ByteCrypt - v1.0.0")
 
 parser.add_argument('-p', '--path', type=str, help='Enter the partition where the data is located', required=True)
-parser.add_argument('-k', '--key', type=str, help='Enter the key on commandline')
+parser.add_argument('-k', '--key', type=str, help='Enter the key in hex')
 parser.add_argument('-kf', '--keyfile', type=str, help='Use the key in a file')
 parser.add_argument('-a', '--action', type=str, help='Chose to decrypt or encrypt: \'d\' for decrypt and \'e\' for encrypt', required=True)
 parser.add_argument('-v', '--verbose', action='store_true', help='Print all the encrypted files')
@@ -42,14 +42,13 @@ def getKey() -> bytes:
         key = open(args.keyfile, "rb").read()
         
         if len(key) != 32:
-            raise RuntimeError("Invalid key lenght")
+            print(ERROR + "Invalid key length")
+            sys.exit(0)
         
         return key
-    
-    if bool(re.match(r'^[0-9a-fA-F]+$', args.key)) and len(bytes.fromhex(args.key)) == 32:
-        return bytes.fromhex(args.key)
-    
-    raise RuntimeError("Invalid value")
+        
+    else:
+        return hashlib.sha256(args.key).digest()
 
 
 def encrypt() -> None:
@@ -111,6 +110,8 @@ def decrypt() -> None:
                 nonce = data[:12]
                 tag = data[-16:]
                 data = data[12:-16]
+                
+                f.close()
 
                 if args.show:
                     print(OK + "Nonce: " + nonce.hex())
@@ -148,7 +149,7 @@ def main() -> None:
         decrypt()
 
     else:
-        raise RuntimeError("Invalid action")
+        print(ERROR + "Invalid action")
 
 
 if __name__ == "__main__":
