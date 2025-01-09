@@ -48,7 +48,7 @@ def getKey() -> bytes:
         return key
         
     else:
-        return hashlib.sha256(args.key).digest()
+        return hashlib.sha256(args.key.encode()).digest()
 
 
 def encrypt() -> None:
@@ -62,9 +62,15 @@ def encrypt() -> None:
     cipher = Crypt(key)
 
     for file in files:
+        if file.endswith(".enc"):
+            print("\n" + WARNING + "The file already have .enc extension")
+
         try:
             if args.show:
-                print("\n" + OK + "Encrypting: " + file)
+                if not file.endswith(".enc"):
+                    print("\n")
+
+                print(OK + "Encrypting: " + file)
 
             data = open(file, "rb").read()
             new_data = cipher.encrypt(data)
@@ -131,6 +137,9 @@ def decrypt() -> None:
             except PermissionError:
                 print(ERROR + "Permission error on file " + file)
         
+            except RuntimeError:
+                print(ERROR + "Error decrypting: " + file)
+
             except Exception as e:
                 print(ERROR + "Unexpected error: " + str(e))
             
